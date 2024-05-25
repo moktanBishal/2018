@@ -49,13 +49,15 @@
           console.log('Received data:', data);
 
           if (data.type === 'chatMessage') {
-            appendMessage(`${data.nickname} [${data.timestamp}]: ${data.message}`);
+            const messageText = `${data.nickname} [${data.timestamp}]: ${data.message}`;
+            appendMessage(messageText);
             scrollToBottom();
           } else if (data.type === 'systemMessage') {
             appendMessage(data.message, 'system-message');
             scrollToBottom();
           }
         };
+
 
         ws.onerror = (error) => {
           console.error('WebSocket error:', error);
