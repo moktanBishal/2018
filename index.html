@@ -202,7 +202,7 @@
       const contract = new web3.eth.Contract(contractABI, contractAddress);
 
       async function connectToChatApp() {
-        const ws = new WebSocket('wss://your-render-service-name.onrender.com'); // Replace with your actual Render WebSocket URL
+        const ws = new WebSocket('https://websocket-rd9d.onrender.com'); // Replace with your actual Render WebSocket URL
 
         function sendJsonMessage(type, data) {
           ws.send(JSON.stringify({ type, ...data }));
