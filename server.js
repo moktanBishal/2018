@@ -10,11 +10,26 @@ const wss = new WebSocket.Server({ server });
 
 wss.on('connection', ws => {
   console.log('New client connected');
-  ws.send(JSON.stringify({ message: 'Hello from WebSocket server!' }));
+  ws.send(JSON.stringify({ type: 'systemMessage', message: 'Hello from WebSocket server!' }));
 
   ws.on('message', message => {
     console.log(`Received: ${message}`);
-    ws.send(`Server received: ${message}`);
+    try {
+      const parsedMessage = JSON.parse(message);
+
+      if (parsedMessage.type === 'chatMessage') {
+        const response = {
+          type: 'chatMessage',
+          message: `Server received: ${parsedMessage.message}`
+        };
+        ws.send(JSON.stringify(response));
+      } else {
+        ws.send(JSON.stringify({ type: 'error', message: 'Unknown message type' }));
+      }
+    } catch (error) {
+      console.error('Error parsing message:', error);
+      ws.send(JSON.stringify({ type: 'error', message: 'Invalid JSON' }));
+    }
   });
 
   ws.on('close', () => {
