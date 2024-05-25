@@ -7,29 +7,153 @@
 </head>
 <body>
   <h1>WebSocket Frontend on GitHub Pages</h1>
-  <p id="message">Connecting...</p>
+  <button id="loginButton">Login with MetaMask</button>
+  <div id="chatFeature" style="display:none;">
+    <input type="text" id="nicknameInput" placeholder="Enter your nickname">
+    <button id="setNicknameButton">Set Nickname</button>
+    <input type="text" id="roomNameInput" placeholder="Enter room name">
+    <button id="createRoomButton">Create Room</button>
+    <select id="roomList"></select>
+    <button id="joinRoomButton">Join Room</button>
+    <button id="getRoomsButton">Get Rooms</button>
+    <div id="chat" style="height: 300px; overflow-y: scroll;"></div>
+    <input type="text" id="messageInput" placeholder="Enter your message">
+    <button id="sendMessageButton">Send Message</button>
+  </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.6.1/web3.min.js"></script>
   <script>
-    const ws = new WebSocket('https://websocket-rd9d.onrender.com');
+    document.addEventListener('DOMContentLoaded', async () => {
+      const web3 = new Web3(window.ethereum);
 
-    ws.onopen = () => {
-      document.getElementById('message').textContent = 'Connected to WebSocket server';
-      ws.send('Hello Server!');
-    };
+      // Replace with your Capstone contract address and ABI
+      const contractAddress = '0x38b89654B8107332A4f6AE66D3205009463DA58D';
+      const contractABI = [ /* Your contract ABI */ ];
 
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      document.getElementById('message').textContent = data.message;
-    };
+      const contract = new web3.eth.Contract(contractABI, contractAddress);
 
-    ws.onerror = (error) => {
-      console.error('WebSocket error:', error);
-      document.getElementById('message').textContent = 'WebSocket error';
-    };
+      async function connectToChatApp() {
+        const ws = new WebSocket('wss://your-render-service-name.onrender.com'); // Replace with your actual Render WebSocket URL
 
-    ws.onclose = () => {
-      document.getElementById('message').textContent = 'WebSocket connection closed';
-    };
+        function sendJsonMessage(type, data) {
+          ws.send(JSON.stringify({ type, ...data }));
+        }
+
+        function scrollToBottom() {
+          const chat = document.getElementById('chat');
+          chat.scrollTop = chat.scrollHeight;
+        }
+
+        ws.onmessage = function(event) {
+          const data = JSON.parse(event.data);
+
+          if (data.type === 'roomList') {
+            const select = document.getElementById('roomList');
+            select.innerHTML = '';
+            data.rooms.forEach(room => {
+              const option = document.createElement('option');
+              option.value = room;
+              option.textContent = room;
+              select.appendChild(option);
+            });
+          } else if (data.type === 'systemMessage') {
+            appendMessage(data.message, 'system-message');
+          } else if (data.type === 'chatMessage') {
+            const message = `${data.message.nickname}: ${data.message.text}`;
+            appendMessage(message);
+            scrollToBottom();
+          } else if (data.type === 'existingMessages') {
+            const chat = document.getElementById('chat');
+            chat.innerHTML = '';
+            data.messages.forEach(msg => {
+              const message = `${msg.nickname}: ${msg.text}`;
+              appendMessage(message);
+            });
+            scrollToBottom();
+          }
+        };
+
+        function appendMessage(message, className = 'message') {
+          const chat = document.getElementById('chat');
+          const messageDiv = document.createElement('div');
+          messageDiv.classList.add(className);
+          messageDiv.innerHTML = `<span class="chat-content">${message}</span>`;
+          chat.appendChild(messageDiv);
+        }
+
+        document.getElementById('setNicknameButton').addEventListener('click', () => {
+          const nicknameInput = document.getElementById('nicknameInput');
+          const nickname = nicknameInput.value.trim();
+
+          if (nickname !== '') {
+            sendJsonMessage('setNickname', { nickname });
+            nicknameInput.value = '';
+          }
+        });
+
+        document.getElementById('createRoomButton').addEventListener('click', () => {
+          const roomNameInput = document.getElementById('roomNameInput');
+          const roomName = roomNameInput.value.trim();
+
+          if (roomName !== '') {
+            sendJsonMessage('createRoom', { roomName });
+            roomNameInput.value = '';
+          }
+        });
+
+        document.getElementById('joinRoomButton').addEventListener('click', () => {
+          const roomName = document.getElementById('roomList').value.trim();
+
+          if (roomName !== '') {
+            sendJsonMessage('joinRoom', { roomName });
+          }
+        });
+
+        document.getElementById('getRoomsButton').addEventListener('click', () => {
+          sendJsonMessage('getRooms', {});
+        });
+
+        document.getElementById('sendMessageButton').addEventListener('click', () => {
+          const messageInput = document.getElementById('messageInput');
+          const message = messageInput.value.trim();
+          const roomList = document.getElementById('roomList');
+          const roomName = roomList.value.trim();
+          if (message !== '') {
+            sendJsonMessage('chatMessage', { message, roomName });
+            messageInput.value = '';
+          }
+        });
+      }
+
+      const connectMetaMask = async () => {
+        const loginButton = document.getElementById('loginButton');
+        try {
+          await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+          const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+
+          document.getElementById('chatFeature').style.display = 'block';
+
+          if (accounts.length > 0) {
+            const balance = await contract.methods.balanceOf(accounts[0]).call();
+
+            if (parseInt(balance) > 0) {
+              console.log('The connected account is a token holder.');
+              await connectToChatApp();
+              document.getElementById('loginButton').style.display = 'none';
+            } else {
+              console.log('The connected account is not a token holder.');
+              document.getElementById('chatFeature').style.display = 'none';
+              alert('Connected account is not a token holder.');
+            }
+          }
+        } catch (error) {
+          console.error('Error connecting with MetaMask:', error);
+        }
+      };
+
+      document.getElementById('loginButton').addEventListener('click', connectMetaMask);
+    });
   </script>
 </body>
 </html>
