@@ -1,24 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WebSocket Frontend</title>
+  <title>WebSocket Chat</title>
+  <style>
+    #chat {
+      height: 300px;
+      overflow-y: scroll;
+      border: 1px solid #000;
+      margin-top: 20px;
+      padding: 10px;
+    }
+    .message {
+      margin-bottom: 10px;
+    }
+    .system-message {
+      font-style: italic;
+      color: gray;
+    }
+  </style>
 </head>
-
 <body>
-  <h1>WebSocket Frontend on GitHub Pages</h1>
+  <h1>WebSocket Chat on GitHub Pages</h1>
   <button id="loginButton">Login with MetaMask</button>
   <div id="chatFeature" style="display:none;">
-    <input type="text" id="nicknameInput" placeholder="Enter your nickname">
-    <button id="setNicknameButton">Set Nickname</button>
-    <input type="text" id="roomNameInput" placeholder="Enter room name">
-    <button id="createRoomButton">Create Room</button>
-    <select id="roomList"></select>
-    <button id="joinRoomButton">Join Room</button>
-    <button id="getRoomsButton">Get Rooms</button>
-    <div id="chat" style="height: 300px; overflow-y: scroll;"></div>
+    <div id="chat"></div>
     <input type="text" id="messageInput" placeholder="Enter your message">
     <button id="sendMessageButton">Send Message</button>
   </div>
@@ -27,7 +34,6 @@
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
       const web3 = new Web3(window.ethereum);
-
       // Replace with your Capstone contract address
       const contractAddress = '0x38b89654B8107332A4f6AE66D3205009463DA58D';
 
@@ -198,11 +204,32 @@
         }
       ];
 
-
       const contract = new web3.eth.Contract(contractABI, contractAddress);
 
       async function connectToChatApp() {
         const ws = new WebSocket('https://websocket-rd9d.onrender.com'); // Replace with your actual Render WebSocket URL
+
+        ws.onopen = () => {
+          console.log('WebSocket connection opened');
+        };
+
+        ws.onmessage = function(event) {
+          const data = JSON.parse(event.data);
+          console.log('Received data:', data);
+
+          if (data.type === 'chatMessage') {
+            appendMessage(data.message);
+            scrollToBottom();
+          }
+        };
+
+        ws.onerror = (error) => {
+          console.error('WebSocket error:', error);
+        };
+
+        ws.onclose = () => {
+          console.log('WebSocket connection closed');
+        };
 
         function sendJsonMessage(type, data) {
           ws.send(JSON.stringify({ type, ...data }));
@@ -213,35 +240,6 @@
           chat.scrollTop = chat.scrollHeight;
         }
 
-        ws.onmessage = function (event) {
-          const data = JSON.parse(event.data);
-
-          if (data.type === 'roomList') {
-            const select = document.getElementById('roomList');
-            select.innerHTML = '';
-            data.rooms.forEach(room => {
-              const option = document.createElement('option');
-              option.value = room;
-              option.textContent = room;
-              select.appendChild(option);
-            });
-          } else if (data.type === 'systemMessage') {
-            appendMessage(data.message, 'system-message');
-          } else if (data.type === 'chatMessage') {
-            const message = `${data.message.nickname}: ${data.message.text}`;
-            appendMessage(message);
-            scrollToBottom();
-          } else if (data.type === 'existingMessages') {
-            const chat = document.getElementById('chat');
-            chat.innerHTML = '';
-            data.messages.forEach(msg => {
-              const message = `${msg.nickname}: ${msg.text}`;
-              appendMessage(message);
-            });
-            scrollToBottom();
-          }
-        };
-
         function appendMessage(message, className = 'message') {
           const chat = document.getElementById('chat');
           const messageDiv = document.createElement('div');
@@ -250,55 +248,20 @@
           chat.appendChild(messageDiv);
         }
 
-        document.getElementById('setNicknameButton').addEventListener('click', () => {
-          const nicknameInput = document.getElementById('nicknameInput');
-          const nickname = nicknameInput.value.trim();
-
-          if (nickname !== '') {
-            sendJsonMessage('setNickname', { nickname });
-            nicknameInput.value = '';
-          }
-        });
-
-        document.getElementById('createRoomButton').addEventListener('click', () => {
-          const roomNameInput = document.getElementById('roomNameInput');
-          const roomName = roomNameInput.value.trim();
-
-          if (roomName !== '') {
-            sendJsonMessage('createRoom', { roomName });
-            roomNameInput.value = '';
-          }
-        });
-
-        document.getElementById('joinRoomButton').addEventListener('click', () => {
-          const roomName = document.getElementById('roomList').value.trim();
-
-          if (roomName !== '') {
-            sendJsonMessage('joinRoom', { roomName });
-          }
-        });
-
-        document.getElementById('getRoomsButton').addEventListener('click', () => {
-          sendJsonMessage('getRooms', {});
-        });
-
         document.getElementById('sendMessageButton').addEventListener('click', () => {
           const messageInput = document.getElementById('messageInput');
           const message = messageInput.value.trim();
-          const roomList = document.getElementById('roomList');
-          const roomName = roomList.value.trim();
+
           if (message !== '') {
-            sendJsonMessage('chatMessage', { message, roomName });
-            messageInput.value = '';
+            sendJsonMessage('chatMessage', { message });
+            messageInput.value = ''; // Clear input field after sending message
           }
         });
       }
 
       const connectMetaMask = async () => {
-        const loginButton = document.getElementById('loginButton');
         try {
           await window.ethereum.request({ method: 'eth_requestAccounts' });
-
           const accounts = await window.ethereum.request({ method: 'eth_accounts' });
 
           document.getElementById('chatFeature').style.display = 'block';
@@ -325,5 +288,4 @@
     });
   </script>
 </body>
-
 </html>
