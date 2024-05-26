@@ -21,7 +21,19 @@
     <button id="toggleEmojiPickerButton">😀</button>
   </div>
 
-  <script>
+  <!-- Import React and ReactDOM -->
+  <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+
+  <!-- Import Babel -->
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+  <!-- Import Emoji Mart -->
+  <script src="https://unpkg.com/emoji-mart@5.4.0/dist/emoji-mart.js"></script>
+
+  <script type="text/babel">
+    const { Picker } = window.EmojiMart;
+
     document.addEventListener('DOMContentLoaded', () => {
       let ws;
       let nickname = '';
@@ -97,21 +109,19 @@
 
       connectToChatApp();
 
-      // Initialize Emoji Mart
-      const picker = new EmojiMart.Picker({
-        onEmojiSelect: (emoji) => {
+      // Initialize Emoji Mart Picker
+      const emojiPickerContainer = document.getElementById('emojiPickerContainer');
+      ReactDOM.render(
+        <Picker onEmojiSelect={(emoji) => {
           const messageInput = document.getElementById('messageInput');
           messageInput.value += emoji.native;
-        },
-        theme: 'auto', // Automatically switch between dark and light theme based on system preferences
-      });
-
-      const emojiPickerContainer = document.getElementById('emojiPickerContainer');
-      emojiPickerContainer.appendChild(picker);
+        }} />,
+        emojiPickerContainer
+      );
 
       const toggleEmojiPickerButton = document.getElementById('toggleEmojiPickerButton');
       toggleEmojiPickerButton.addEventListener('click', () => {
-        emojiPickerContainer.classList.toggle('hidden');
+        emojiPickerContainer.classList.toggle('visible');
       });
     });
   </script>
