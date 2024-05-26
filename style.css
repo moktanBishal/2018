@@ -1,43 +1,63 @@
+/* style.css */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+#chatFeature {
+  width: 90%;
+  max-width: 600px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
 #chat {
   height: 300px;
   overflow-y: scroll;
-  border: 1px solid #000;
-  margin-top: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
   padding: 10px;
-  box-sizing: border-box;
+  background-color: #f9f9f9;
+  margin-bottom: 20px;
 }
+
 .message {
   margin-bottom: 10px;
 }
+
 .system-message {
   font-style: italic;
   color: gray;
 }
-#chatFeature {
-  max-width: 600px;
-  margin: 0 auto;
+
+input[type="text"] {
+  width: calc(100% - 100px);
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-sizing: border-box;
+  font-size: 16px;
 }
-input, button {
-  width: calc(100% - 20px);
-  margin-top: 10px;
+
+button {
   padding: 10px;
   font-size: 16px;
-  box-sizing: border-box;
+  border: none;
+  border-radius: 8px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
 }
-#emojiPickerContainer {
-  position: absolute;
-  bottom: 60px; /* Adjust based on your layout */
-  right: 20px;  /* Adjust based on your layout */
-  z-index: 1000;
-  display: none; /* Initially hidden */
-}
-#emojiPickerContainer.hidden {
-  display: none;
-}
-#toggleEmojiPickerButton {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  padding: 10px;
-  font-size: 24px;
+
+button:hover {
+  background-color: #0056b3;
 }
