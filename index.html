@@ -4,9 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WebSocket Chat</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@emoji-mart/css/dist/emoji-mart.css">
   <link rel="stylesheet" href="./style.css">
-  <script src="https://cdn.jsdelivr.net/npm/@emoji-mart/react/dist/emoji-mart.min.js"></script>
+  
 </head>
 <body>
   <h1>WebSocket Chat</h1>
@@ -17,23 +16,9 @@
     <br><br>
     <input type="text" id="messageInput" placeholder="Enter your message">
     <button id="sendMessageButton">Send Message</button>
-    <div id="emojiPickerContainer"></div>
-    <button id="toggleEmojiPickerButton">😀</button>
   </div>
 
-  <!-- Import React and ReactDOM -->
-  <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
-
-  <!-- Import Babel -->
-  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-
-  <!-- Import Emoji Mart -->
-  <script src="https://unpkg.com/emoji-mart@5.4.0/dist/emoji-mart.js"></script>
-
-  <script type="text/babel">
-    const { Picker } = window.EmojiMart;
-
+  <script>
     document.addEventListener('DOMContentLoaded', () => {
       let ws;
       let nickname = '';
@@ -59,6 +44,7 @@
           }
         };
 
+
         ws.onerror = (error) => {
           console.error('WebSocket error:', error);
         };
@@ -68,6 +54,7 @@
           // Reconnect after a delay
           setTimeout(connectToChatApp, 3000);
         };
+
 
         function sendJsonMessage(type, data) {
           ws.send(JSON.stringify({ type, ...data }));
@@ -108,21 +95,6 @@
       }
 
       connectToChatApp();
-
-      // Initialize Emoji Mart Picker
-      const emojiPickerContainer = document.getElementById('emojiPickerContainer');
-      ReactDOM.render(
-        <Picker onEmojiSelect={(emoji) => {
-          const messageInput = document.getElementById('messageInput');
-          messageInput.value += emoji.native;
-        }} />,
-        emojiPickerContainer
-      );
-
-      const toggleEmojiPickerButton = document.getElementById('toggleEmojiPickerButton');
-      toggleEmojiPickerButton.addEventListener('click', () => {
-        emojiPickerContainer.classList.toggle('visible');
-      });
     });
   </script>
 </body>
