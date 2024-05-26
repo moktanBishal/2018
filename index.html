@@ -89,7 +89,7 @@
 
           if (nickname !== '') {
             sendJsonMessage('setNickname', { nickname });
-            nicknameInput.value = ''; // Clear input field after setting nickname
+            nicknameInput.style.display = 'none'; // Clear input field after setting nickname
           }
         });
       }
