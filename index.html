@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WebSocket Chat</title>
   <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@missive/emoji-mart@3.0.1/css/emoji-mart.css">
 
 </head>
+
 <body>
   <h1>WebSocket Chat</h1>
   <div id="chatFeature">
@@ -16,6 +19,9 @@
     <br><br>
     <input type="text" id="messageInput" placeholder="Enter your message">
     <button id="sendMessageButton">Send Message</button>
+    <div id="emojiPickerContainer"></div>
+    <button id="toggleEmojiPickerButton">😀</button>
+
   </div>
 
   <script>
@@ -30,7 +36,7 @@
           console.log('WebSocket connection opened');
         };
 
-        ws.onmessage = function(event) {
+        ws.onmessage = function (event) {
           const data = JSON.parse(event.data);
           console.log('Received data:', data);
 
@@ -95,7 +101,28 @@
       }
 
       connectToChatApp();
+
+      // Initialize Emoji Mart
+      const picker = new EmojiMart.Picker({
+        onEmojiSelect: (emoji) => {
+          const messageInput = document.getElementById('messageInput');
+          messageInput.value += emoji.native;
+        },
+        theme: 'auto', // Automatically switch between dark and light theme based on system preferences
+      });
+
+      const emojiPickerContainer = document.getElementById('emojiPickerContainer');
+      emojiPickerContainer.appendChild(picker);
+
+      const toggleEmojiPickerButton = document.getElementById('toggleEmojiPickerButton');
+      toggleEmojiPickerButton.addEventListener('click', () => {
+        emojiPickerContainer.classList.toggle('hidden');
+      });
     });
   </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@missive/emoji-mart@3.0.1/dist/emoji-mart.min.js"></script>
+
 </body>
+
 </html>
