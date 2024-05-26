@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let nickname = '';
 
   function connectToChatApp() {
-    ws = new WebSocket('wss://websocket-rd9d.onrender.com'); // Replace with your actual Render WebSocket URL
+    ws = new WebSocket('ws://websocket-rd9d.onrender.com'); // Replace with your actual Render WebSocket URL
     // ws = new WebSocket('ws://192.168.1.64:3000');
 
     ws.onopen = () => {
