@@ -4,22 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WebSocket Chat</title>
-  <style>
-    #chat {
-      height: 300px;
-      overflow-y: scroll;
-      border: 1px solid #000;
-      margin-top: 20px;
-      padding: 10px;
-    }
-    .message {
-      margin-bottom: 10px;
-    }
-    .system-message {
-      font-style: italic;
-      color: gray;
-    }
-  </style>
+  <link rel="stylesheet" href="./style.css">
+
 </head>
 <body>
   <h1>WebSocket Chat</h1>
@@ -38,7 +24,7 @@
       let nickname = '';
 
       function connectToChatApp() {
-        ws = new WebSocket('https://websocket-rd9d.onrender.com'); // Replace with your actual Render WebSocket URL
+        ws = new WebSocket('wss://websocket-rd9d.onrender.com'); // Replace with your actual Render WebSocket URL
 
         ws.onopen = () => {
           console.log('WebSocket connection opened');
@@ -65,7 +51,10 @@
 
         ws.onclose = () => {
           console.log('WebSocket connection closed');
+          // Reconnect after a delay
+          setTimeout(connectToChatApp, 3000);
         };
+
 
         function sendJsonMessage(type, data) {
           ws.send(JSON.stringify({ type, ...data }));
