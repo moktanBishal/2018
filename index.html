@@ -85,15 +85,14 @@
 
         document.getElementById('setNicknameButton').addEventListener('click', () => {
           const nicknameInput = document.getElementById('nicknameInput');
+          const setNickname = document.getElementById('setNickname');
           nickname = nicknameInput.value.trim();
 
           if (nickname !== '') {
             sendJsonMessage('setNickname', { nickname });
-            nicknameInput.value = ''; // Clear input field after setting nickname
-
             // Remove the nickname setting section (button and input)
-            const nicknameContainer = nicknameInput.parentElement;
-            nicknameContainer.parentNode.removeChild(nicknameContainer);
+            nicknameInput.style.display = 'none';
+            setNickname.style.display = 'none';
           }
         });
       }
