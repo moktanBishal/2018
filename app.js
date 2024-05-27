@@ -1,9 +1,15 @@
+const express = require('express');
 const http = require('http');
 const path = require('path');
 const send = require('send');
 const { handleWebSocketConnection } = require('./websocketHandler');
 
-const server = http.createServer();
+
+const app = express();
+const port = process.env.PORT || 3000;
+
+const server = http.createServer(app);
+
 // const server = http.createServer((req, res) => {
 //     // let filePath = req.url === '/' ? '/chat.html' : req.url;
 //     // filePath = path.join(__dirname, '../frontend', filePath);
@@ -19,7 +25,6 @@ const server = http.createServer();
 // Initialize WebSocket connection handler
 handleWebSocketConnection(server);
 
-const PORT = 3000;
 server.listen(PORT, () => {
     console.log(`Server is running at http://localhost:${PORT}/`);
 });
