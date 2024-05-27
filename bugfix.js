@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
   async function connectToChatApp() {
     // Establish a WebSocket connection to the server
-    const ws = new WebSocket('ws://192.168.1.64:3000');
+    const ws = new WebSocket('wss://websocket-rd9d.onrender.com');
 
     // Function to send a JSON message to the server
     function sendJsonMessage(type, data) {
