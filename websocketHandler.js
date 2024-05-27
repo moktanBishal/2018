@@ -1,6 +1,6 @@
 const WebSocket = require('ws');
 const moment = require('moment');
-const { Room, Message, Account } = require('./databaseOperation');
+const { Room, Message } = require('./databaseOperation');
 
 // Maintain a map to store connected clients and their nicknames
 const connectedClients = new Map();

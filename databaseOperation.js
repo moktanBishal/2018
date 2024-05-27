@@ -23,4 +23,4 @@ const messageSchema = new mongoose.Schema({
 const Message = mongoose.model('Message', messageSchema);
 
 // Export the models and any necessary database functions
-module.exports = { Room, Message, Account };
+module.exports = { Room, Message };
