@@ -1,13 +1,11 @@
+require('dotenv').config();
 const mongoose = require('mongoose');
-// Connect to MongoDB
-mongoose.connect('mongodb+srv://20saallama:xcmeRTCmpigBHAWq@cluster0.ya6gbh8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
+
+const mongoURI = process.env.MONGODB_URI;
+mongoose.connect(mongoURI, {
   connectTimeoutMS: 30000,
 });
 const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-db.once('open', () => {
-  console.log('Connected to MongoDB');
-});
 
 // Define schema for chat rooms
 const roomSchema = new mongoose.Schema({name: String});
