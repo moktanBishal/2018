@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dhukuti Token Owners</title>
+  <link rel="stylesheet" href="./style.css">
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.3.5/dist/web3.min.js"></script>
+
+</head>
+
+<body>
+  <!-- Navigation bar -->
+  <nav>
+    <a href="./index.html">Home</a>
+    <a href="./chat.html">Chat</a>
+    <a href="./token.html">About</a>
+  </nav>
+
+  <h1>ERC Token Details </h1>
+
+  <button id="loginButton">Connect with Metamask</button>
+
+  <div id="metaData">
+    <div class="tokenSection" id="tokenDetails">
+      <!-- <h3>Token Details:</h3> -->
+      <p id="name">Name:</p>
+      <p id="symbol">Symbol:</p>
+      <p id="totalSupply">Total Supply:</p>
+    </div>
+
+    <div class="tokenSection" id="tokenBalances">
+      <table>
+        <thead>
+          <tr>
+            <th>Account Address</th>
+            <th>Token Balance</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+
+  </div>
+  <div id="newWallet">
+  </div>
+
+  <!-- Footer Section -->
+  <footer>
+    <div class="footer-section">
+      <h3>About the Project</h3>
+      <p>This capstone project was completed as part of the requirements for the Bachelor's degree in Computer Science.</p>
+    </div>
+  </footer>
+
+  <script src="./dapp.js"></script>
+</body>
+
+</html>
