@@ -5,13 +5,14 @@ const send = require('send');
 const { handleWebSocketConnection } = require('./websocketHandler');
 
 
-// const app = express();
+const app = express();
 const PORT = process.env.PORT || 3000;
+
 
 // const server = http.createServer(app);
 
 const server = http.createServer((req, res) => {
-    let filePath = req.url === '/' ? '/chat.html' : req.url;
+    let filePath = req.url === '/' ? '/index.html' : req.url;
     filePath = path.join(__dirname, '../frontend', filePath);
     send(req, filePath)
         .on('error', (err) => {

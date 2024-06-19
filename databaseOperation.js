@@ -5,7 +5,6 @@ const mongoURI = process.env.MONGODB_URI;
 mongoose.connect(mongoURI, {
   connectTimeoutMS: 30000,
 });
-const db = mongoose.connection;
 
 // Define schema for chat rooms
 const roomSchema = new mongoose.Schema({name: String});
@@ -20,5 +19,9 @@ const messageSchema = new mongoose.Schema({
 });
 const Message = mongoose.model('Message', messageSchema);
 
+// Defining account address for metamask
+const accountSchema = new mongoose.Schema({address: String});
+const Account = mongoose.model('Account', accountSchema);
+
 // Export the models and any necessary database functions
-module.exports = { Room, Message };
+module.exports = { Room, Message, Account };
